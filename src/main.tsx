@@ -9,6 +9,7 @@ import Play from './pages/Play';
 import AdminHome from './pages/AdminHome';
 import AdminRoom from './pages/AdminRoom';
 import Telao from './pages/Telao';
+import { Analytics } from "@vercel/analytics/next"
 
 applyStoredTheme();
 
