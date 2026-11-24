@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* Cores do tema: as classes bg-surface, text-muted, bg-accent... apontam para estas variáveis */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-danger: var(--danger);
+}
+
+/* Tema 1: branco e vermelho (padrão) */
+:root,
+:root[data-theme="vermelho"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f5f5f5;
+  --surface-3: #e9e9e9;
+  --line: #dedede;
+  --fg: #111111;
+  --muted: #5c5c5c;
+  --accent: #d62828;
+  --on-accent: #ffffff;
+  --accent-soft: #fde8e8;
+  --ok: #15803d;
+  --danger: #b91c1c;
+  color-scheme: light;
+}
+
+/* Tema 2: azul e preto */
+:root[data-theme="azul"] {
+  --bg: #0a0a0c;
+  --surface: #131316;
+  --surface-2: #1b1b1f;
+  --surface-3: #27272d;
+  --line: #2e2e35;
+  --fg: #f4f4f5;
+  --muted: #a1a1aa;
+  --accent: #2563eb;
+  --on-accent: #ffffff;
+  --accent-soft: #14213d;
+  --ok: #22c55e;
+  --danger: #ef4444;
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.25s, color 0.25s;
+}
+
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.pulse-ring {
+  animation: pulse-ring 1.6s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--danger) 55%, transparent); }
+  100% { box-shadow: 0 0 0 18px transparent; }
+}
+
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 8px; }
+
+select.nice {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.25rem;
+}
+select.nice option {
+  background: var(--surface);
+  color: var(--fg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-ring { animation: none; }
+}
