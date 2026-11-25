@@ -97,14 +97,58 @@ A pontuação usa a **média** das notas, para que equipes de 5 e de 6 pessoas c
 | Design Thinking | Mapa de Empatia, árvores de problemas e soluções, storyboard e protótipo |
 | Conflitos e tempo | Carta de conflitos e time-box de cada evento |
 
-## Parte técnica
+## Stack
 
-- **Hospedagem:** [Vercel](https://vercel.com/), com o site acessível direto no navegador, sem instalar nada
-- **Banco de dados e tempo real:** [Supabase](https://supabase.com/), para que todas as telas se atualizem na hora
-- **Segurança:** o gabarito fica protegido no servidor e a pergunta é anônima de verdade
-- **Cronômetro:** calculado pelo horário do servidor, então todos veem o mesmo tempo
-- **Custo:** R$ 0, usando os planos gratuitos
-- **Plano B:** se a internet da escola cair, há uma versão em papel do jogo com as mesmas regras
+| Camada | Tecnologias |
+|--------|-------------|
+| Front-end | React 19, TypeScript, Vite, Tailwind CSS 4, React Router 7 |
+| Interface e animação | Framer Motion (arrastar e reordenar), Lucide (ícones), canvas-confetti |
+| Back-end e tempo real | Supabase (PostgreSQL, Realtime e funções RPC) |
+| Hospedagem e métricas | Vercel e Vercel Analytics |
+| Qualidade | ESLint e checagem de tipos (`tsc -b`) no build |
+
+## Arquitetura e decisões
+
+- **Tempo real:** o app assina as tabelas `rooms`, `teams`, `players` e `questions` pelo Supabase Realtime. Se a conexão cair, uma atualização a cada 4 s serve de rede de segurança.
+- **Cronômetro único:** o navegador mede a diferença para o relógio do servidor (função `server_now`), então todas as telas mostram o mesmo tempo.
+- **Lógica no banco:** as ações do jogo (entrar na sala, salvar resposta, avançar etapa, pontuar) são chamadas por RPC. Cada jogador tem um token de sessão e o facilitador tem uma chave de administração.
+- **Gabarito protegido:** as respostas corretas ficam na tabela `card_keys`, no banco, e não no código do navegador.
+- **Cartas por tipo de exercício:** o conteúdo é descrito em dados (`classify`, `order`, `flow`, `single` e desenho) e renderizado por um único componente, o `CardPlayer`. Isso evita repetir código a cada carta nova.
+- **Desenho:** as cartas Storyboard e Logo & Tela usam `canvas`, com guias de desenho, e o resultado é salvo como imagem.
+- **Telas:** 5 rotas, uma para cada papel (entrada, jogo, painel da Empresa, lista de salas e telão).
+- **Temas visuais:** dois temas de cor (branco e vermelho; azul e preto), guardados no navegador.
+- **Custo:** R$ 0, nos planos gratuitos do Supabase e da Vercel.
+- **Plano B:** se a internet da escola cair, há uma versão em papel do jogo com as mesmas regras.
+
+## Estrutura do projeto
+
+```
+src/
+├── pages/        Home, Play, AdminHome, AdminRoom, Telao
+├── components/   CardPlayer (cartas), game (blocos do jogo), ui (componentes base)
+└── lib/          supabase.ts (cliente e tipos), useRoom.ts (tempo real e relógio),
+                  cards.ts (cartas), themes.ts (temas e conteúdo por tema)
+```
+
+## Rodar localmente
+
+Requisitos: Node.js 18 ou superior e um projeto no Supabase.
+
+```bash
+npm install
+npm run dev      # servidor de desenvolvimento
+npm run build    # checa os tipos e gera a versão de produção
+npm run lint     # ESLint
+```
+
+Variáveis de ambiente (arquivo `.env.local`):
+
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```
+
+A chave `anon` é pública por natureza; o acesso real aos dados é controlado pelas regras do banco.
 
 ## Como jogar
 
